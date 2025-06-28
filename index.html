@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mery Accesorios Import</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos personalizados para animaciones */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes bounce-in {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.2); opacity: 1; }
+          100% { transform: scale(1); }
+        }
+        .animate-bounce-in {
+          animation: bounce-in 0.3s ease-out;
+        }
+
+        @keyframes scale-in {
+          0% { transform: scale(0.9); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 text-gray-800 p-4 sm:p-6 lg:p-8">
+
+    <!-- Encabezado -->
+    <header class="text-center mb-10 flex flex-col items-center relative">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-purple-700 drop-shadow-lg animate-pulse">
+            Mery Accesorios Import
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600 mt-2">
+            ¡Tu destino para la joyería Xuping y de acero fina china!
+        </p>
+
+        <!-- Icono del Carrito en la esquina superior derecha -->
+        <button id="cart-icon-button"
+          class="absolute top-0 right-0 m-4 p-3 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-purple-300"
+          aria-label="Abrir carrito de compras">
+          <i class="fas fa-shopping-cart text-2xl"></i>
+          <span id="cart-item-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden animate-bounce-in">
+              0
+          </span>
+        </button>
+    </header>
+
+    <!-- Navegación y Filtro de Categorías -->
+    <nav id="category-nav" class="mb-8 flex flex-wrap justify-center gap-3">
+        <!-- Los botones de categoría se renderizarán aquí con JS -->
+    </nav>
+
+    <!-- Sección de Productos -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-bold text-purple-600 mb-6 text-center sm:text-left">Nuestros Productos</h2>
+        <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Las tarjetas de productos se renderizarán aquí con JS -->
+        </div>
+    </section>
+
+    <!-- Carrito de Compras como Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg max-h-[90vh] overflow-y-auto border border-purple-200 relative animate-scale-in">
+            <button id="close-cart-button"
+              class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold focus:outline-none"
+              aria-label="Cerrar carrito">
+              &times;
+            </button>
+            <h2 class="text-3xl font-bold text-purple-600 mb-6 flex items-center justify-between">
+                <span>Carrito de Compras</span>
+                <i class="fas fa-shopping-cart text-purple-500 text-3xl"></i>
+            </h2>
+            <div id="cart-empty-message" class="text-center text-gray-500 text-lg py-8">Tu carrito está vacío. ¡Empieza a añadir joyas!</div>
+            <div id="cart-items-container" class="space-y-4">
+                <!-- Los ítems del carrito se renderizarán aquí con JS -->
+            </div>
+
+            <div id="cart-summary-section" class="mt-8 pt-6 border-t border-purple-200 hidden">
+                <div class="flex justify-between items-center text-lg mb-2">
+                    <span class="font-semibold">Subtotal:</span>
+                    <span id="cart-subtotal">$0.00</span>
+                </div>
+
+                <!-- Sección de Cupón de Descuento -->
+                <div class="mt-6 p-4 bg-purple-50 rounded-lg flex flex-col sm:flex-row items-center gap-4">
+                    <input type="text" id="coupon-code-input" placeholder="Ingresar cupón de descuento"
+                      class="flex-grow p-3 rounded-lg border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    <button id="apply-coupon-button"
+                      class="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-300 shadow-md transform hover:scale-105 active:scale-95">
+                      Aplicar Cupón
+                    </button>
+                </div>
+                <p id="coupon-message" class="mt-2 text-center text-sm font-medium"></p>
+
+                <div id="discount-display" class="flex justify-between items-center text-lg text-green-600 mt-4 mb-2 hidden">
+                    <span class="font-semibold">Descuento (<span id="discount-percentage">0</span>%):</span>
+                    <span id="discount-amount">-$0.00</span>
+                </div>
+
+                <div class="flex justify-between items-center text-2xl font-bold text-purple-800 mt-4">
+                    <span>Total:</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+
+                <button id="checkout-button" class="mt-8 w-full bg-pink-500 text-white py-4 rounded-xl text-xl font-bold shadow-lg hover:bg-pink-600 transition-all duration-300 transform hover:scale-105 active:scale-95">
+                    Proceder al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="text-center text-gray-500 mt-12 text-sm">
+        <p>&copy; <span id="current-year"></span> Mery Accesorios Import. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Datos de productos de ejemplo
+        const initialProducts = [
+          {
+            id: 1,
+            name: 'Anillo Brillante de Acero',
+            category: 'Anillos',
+            price: 15.99,
+            image: 'https://placehold.co/300x200/c7a5ba/ffffff?text=Anillo',
+            description: 'Anillo elegante de acero inoxidable con incrustaciones de circonio cúbico.'
+          },
+          {
+            id: 2,
+            name: 'Collar con Dije Corazón Xuping',
+            category: 'Collares',
+            price: 25.50,
+            image: 'https://placehold.co/300x200/a5bad4/ffffff?text=Collar',
+            description: 'Collar chapado en oro de 18K de la marca Xuping con un delicado dije de corazón.'
+          },
+          {
+            id: 3,
+            name: 'Aretes Largos de Acero Fino',
+            category: 'Aretes',
+            price: 12.00,
+            image: 'https://placehold.co/300x200/bacede/ffffff?text=Aretes',
+            description: 'Aretes colgantes de acero quirúrgico, hipoalergénicos y ligeros.'
+          },
+          {
+            id: 4,
+            name: 'Pulsera Cadena Gruesa Xuping',
+            category: 'Pulseras',
+            price: 20.75,
+            image: 'https://placehold.co/300x200/e0b1cb/ffffff?text=Pulsera',
+            description: 'Pulsera de eslabones gruesos Xuping, ideal para un estilo moderno y audaz.'
+          },
+          {
+            id: 5,
+            name: 'Set Anillo y Aretes Florales',
+            category: 'Pack de Anillo y Arete',
+            price: 35.00,
+            image: 'https://placehold.co/300x200/d4a5ba/ffffff?text=Pack',
+            description: 'Conjunto coordinado de anillo y aretes con diseño floral, perfecto para regalar.'
+          },
+          {
+            id: 6,
+            name: 'Argollas Minimalistas de Acero',
+            category: 'Aretes',
+            price: 9.50,
+            image: 'https://placehold.co/300x200/d3c4ea/ffffff?text=Argollas',
+            description: 'Pequeñas argollas de acero pulido, ideales para el uso diario.'
+          },
+          {
+            id: 7,
+            name: 'Collar Estilo Choker Xuping',
+            category: 'Collares',
+            price: 18.00,
+            image: 'https://placehold.co/300x200/aec6cf/ffffff?text=Choker',
+            description: 'Moderno collar choker de Xuping con un diseño geométrico sutil.'
+          },
+          {
+            id: 8,
+            name: 'Pulsera de Charms de Acero',
+            category: 'Pulseras',
+            price: 22.00,
+            image: 'https://placehold.co/300x200/f0b7a4/ffffff?text=Charms',
+            description: 'Pulsera de acero con varios charms colgantes, personalizable.'
+          },
+        ];
+
+        // Cupones de descuento de ejemplo
+        const discountCodes = {
+          'MERY10': 0.10, // 10% de descuento
+          'XUPING20': 0.20, // 20% de descuento
+        };
+
+        // --- Estado Global de la Aplicación ---
+        let products = initialProducts;
+        let cartItems = [];
+        let couponCode = '';
+        let discount = 0;
+        let couponMessage = '';
+        let filterCategory = 'Todos';
+
+        // --- Elementos del DOM ---
+        const productsContainer = document.getElementById('products-container');
+        const categoryNav = document.getElementById('category-nav');
+        const cartIconBtn = document.getElementById('cart-icon-button');
+        const cartItemCountSpan = document.getElementById('cart-item-count');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartBtn = document.getElementById('close-cart-button');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartEmptyMessage = document.getElementById('cart-empty-message');
+        const cartSummarySection = document.getElementById('cart-summary-section');
+        const cartSubtotalSpan = document.getElementById('cart-subtotal');
+        const couponCodeInput = document.getElementById('coupon-code-input');
+        const applyCouponBtn = document.getElementById('apply-coupon-button');
+        const couponMessageP = document.getElementById('coupon-message');
+        const discountDisplay = document.getElementById('discount-display');
+        const discountPercentageSpan = document.getElementById('discount-percentage');
+        const discountAmountSpan = document.getElementById('discount-amount');
+        const cartTotalSpan = document.getElementById('cart-total');
+        const checkoutButton = document.getElementById('checkout-button');
+        const currentYearSpan = document.getElementById('current-year');
+
+        // --- Funciones de Renderizado ---
+
+        /**
+         * Renderiza las tarjetas de productos en el contenedor principal.
+         * @param {Array} productsToRender - La lista de productos a mostrar.
+         */
+        function renderProducts(productsToRender) {
+            productsContainer.innerHTML = ''; // Limpia el contenedor actual
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden border border-gray-100 flex flex-col';
+                productCard.innerHTML = `
+                    <img
+                        src="${product.image}"
+                        alt="${product.name}"
+                        class="w-full h-48 object-cover rounded-t-xl"
+                        onerror="this.onerror=null; this.src='https://placehold.co/300x200/cccccc/333333?text=Imagen+No+Disp.'"
+                    />
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="text-xl font-semibold text-purple-700 mb-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-3 flex-grow">${product.description}</p>
+                        <div class="flex justify-between items-center mt-auto">
+                            <span class="text-2xl font-bold text-purple-800">$${product.price.toFixed(2)}</span>
+                            <button data-product-id="${product.id}"
+                                class="add-to-cart-btn bg-purple-500 text-white px-5 py-2 rounded-full font-medium hover:bg-purple-600 transition-all duration-300 shadow-md flex items-center gap-2 transform hover:scale-105 active:scale-95">
+                                <i class="fas fa-plus"></i> Añadir
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productsContainer.appendChild(productCard);
+            });
+
+            // Adjuntar event listeners a los botones "Añadir al carrito"
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const productId = parseInt(event.currentTarget.dataset.productId);
+                    const productToAdd = products.find(p => p.id === productId);
+                    if (productToAdd) {
+                        addToCart(productToAdd);
+                        renderCart(); // Re-renderizar el carrito después de añadir
+                    }
+                });
+            });
+        }
+
+        /**
+         * Renderiza los botones de categoría.
+         */
+        function renderCategories() {
+            categoryNav.innerHTML = '';
+            const allCategories = ['Todos', ...new Set(initialProducts.map(p => p.category))];
+            allCategories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.className = `px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out
+                    ${filterCategory === category
+                        ? 'bg-purple-600 text-white shadow-md transform scale-105'
+                        : 'bg-white text-purple-700 border border-purple-300 hover:bg-purple-100'
+                    }`;
+                button.addEventListener('click', () => {
+                    filterCategory = category;
+                    renderCategories(); // Re-renderizar categorías para actualizar el estilo del botón activo
+                    renderProducts(filterCategory === 'Todos' ? products : products.filter(p => p.category === filterCategory));
+                });
+                categoryNav.appendChild(button);
+            });
+        }
+
+        /**
+         * Renderiza los ítems en el carrito y actualiza el resumen.
+         */
+        function renderCart() {
+            cartItemsContainer.innerHTML = ''; // Limpia el contenedor de ítems del carrito
+
+            if (cartItems.length === 0) {
+                cartEmptyMessage.classList.remove('hidden');
+                cartSummarySection.classList.add('hidden');
+                cartItemCountSpan.classList.add('hidden'); // Ocultar el contador si el carrito está vacío
+            } else {
+                cartEmptyMessage.classList.add('hidden');
+                cartSummarySection.classList.remove('hidden');
+                cartItemCountSpan.classList.remove('hidden'); // Mostrar el contador si hay ítems
+                cartItemCountSpan.textContent = cartItems.length;
+
+                cartItems.forEach(item => {
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.className = 'flex items-center justify-between bg-purple-50 p-4 rounded-xl shadow-sm border border-purple-100 animate-fade-in';
+                    cartItemDiv.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <img
+                                src="${item.image}"
+                                alt="${item.name}"
+                                class="w-20 h-20 object-cover rounded-lg shadow-md"
+                                onerror="this.onerror=null; this.src='https://placehold.co/80x80/cccccc/333333?text=Img'"
+                            />
+                            <div>
+                                <h4 class="font-semibold text-lg text-purple-700">${item.name}</h4>
+                                <p class="text-gray-600">$${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button data-product-id="${item.id}" data-action="decrease"
+                                class="quantity-btn bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-lg font-bold hover:bg-purple-300 transition-colors duration-200 active:scale-95">
+                                -
+                            </button>
+                            <span class="text-xl font-bold text-purple-800 w-8 text-center">${item.quantity}</span>
+                            <button data-product-id="${item.id}" data-action="increase"
+                                class="quantity-btn bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-lg font-bold hover:bg-purple-300 transition-colors duration-200 active:scale-95">
+                                +
+                            </button>
+                            <button data-product-id="${item.id}"
+                                class="remove-from-cart-btn bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-200 shadow-md ml-4 transform hover:scale-105 active:scale-95"
+                                aria-label="Eliminar del carrito">
+                                <i class="fas fa-trash-alt text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                });
+
+                // Adjuntar event listeners para botones de cantidad y eliminar
+                document.querySelectorAll('.quantity-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const productId = parseInt(event.currentTarget.dataset.productId);
+                        const action = event.currentTarget.dataset.action;
+                        const itemToUpdate = cartItems.find(item => item.id === productId);
+                        if (itemToUpdate) {
+                            if (action === 'increase') {
+                                updateQuantity(productId, itemToUpdate.quantity + 1);
+                            } else if (action === 'decrease') {
+                                updateQuantity(productId, itemToUpdate.quantity - 1);
+                            }
+                            renderCart();
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const productId = parseInt(event.currentTarget.dataset.productId);
+                        removeFromCart(productId);
+                        renderCart();
+                    });
+                });
+            }
+
+            // Actualizar resumen del carrito
+            const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+            const total = subtotal * (1 - discount);
+
+            cartSubtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+            cartTotalSpan.textContent = `$${total.toFixed(2)}`;
+
+            if (discount > 0) {
+                discountDisplay.classList.remove('hidden');
+                discountPercentageSpan.textContent = `${(discount * 100).toFixed(0)}`;
+                discountAmountSpan.textContent = `-$${(subtotal - total).toFixed(2)}`;
+            } else {
+                discountDisplay.classList.add('hidden');
+            }
+
+            // Actualizar mensaje del cupón
+            couponMessageP.textContent = couponMessage;
+            if (couponMessage) {
+                couponMessageP.className = `mt-2 text-center text-sm font-medium ${discount > 0 ? 'text-green-600' : 'text-red-600'}`;
+            } else {
+                couponMessageP.className = `mt-2 text-center text-sm font-medium`; // Limpiar clases si no hay mensaje
+            }
+        }
+
+        // --- Funciones de Lógica de Negocio ---
+
+        /**
+         * Agrega un producto al carrito o incrementa su cantidad.
+         * @param {Object} product - El producto a añadir.
+         */
+        function addToCart(product) {
+            const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+            if (existingItemIndex > -1) {
+                cartItems[existingItemIndex].quantity += 1;
+            } else {
+                cartItems.push({ ...product, quantity: 1 });
+            }
+        }
+
+        /**
+         * Elimina un producto del carrito.
+         * @param {number} productId - El ID del producto a eliminar.
+         */
+        function removeFromCart(productId) {
+            cartItems = cartItems.filter(item => item.id !== productId);
+        }
+
+        /**
+         * Actualiza la cantidad de un producto en el carrito.
+         * @param {number} productId - El ID del producto.
+         * @param {number} newQuantity - La nueva cantidad.
+         */
+        function updateQuantity(productId, newQuantity) {
+            cartItems = cartItems.map(item =>
+                item.id === productId ? { ...item, quantity: Math.max(1, newQuantity) } : item
+            );
+        }
+
+        /**
+         * Aplica el cupón de descuento.
+         */
+        function applyCoupon() {
+            const code = couponCodeInput.value.toUpperCase();
+            if (discountCodes[code]) {
+                discount = discountCodes[code];
+                couponMessage = 'Cupón aplicado con éxito!';
+            } else {
+                discount = 0;
+                couponMessage = 'Código de cupón inválido.';
+            }
+            renderCart(); // Re-renderizar para actualizar totales y mensaje
+        }
+
+        // --- Event Listeners Globales ---
+        cartIconBtn.addEventListener('click', () => {
+            cartModal.classList.remove('hidden');
+            renderCart(); // Asegurarse de que el carrito esté actualizado al abrir
+        });
+
+        closeCartBtn.addEventListener('click', () => {
+            cartModal.classList.add('hidden');
+        });
+
+        applyCouponBtn.addEventListener('click', applyCoupon);
+
+        // --- Inicialización al Cargar la Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products); // Renderiza todos los productos inicialmente
+            renderCategories(); // Renderiza los botones de categoría
+            currentYearSpan.textContent = new Date().getFullYear(); // Actualiza el año en el footer
+        });
+
+    </script>
+</body>
+</html>

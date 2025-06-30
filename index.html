@@ -43,16 +43,6 @@
         <p class="text-lg sm:text-xl text-gray-600 mt-2">
             ¡Tu destino para la joyería Xuping y de acero fina china!
         </p>
-
-        <!-- Icono del Carrito en la esquina superior derecha -->
-        <button id="cart-icon-button"
-          class="absolute top-0 right-0 m-4 p-3 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-purple-300"
-          aria-label="Abrir carrito de compras">
-          <i class="fas fa-shopping-cart text-2xl"></i>
-          <span id="cart-item-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden animate-bounce-in">
-              0
-          </span>
-        </button>
     </header>
 
     <!-- Navegación y Filtro de Categorías -->
@@ -67,6 +57,23 @@
             <!-- Las tarjetas de productos se renderizarán aquí con JS -->
         </div>
     </section>
+
+    <!-- Carrito de Compras como Botón Flotante -->
+    <button id="cart-icon-button"
+      class="fixed bottom-4 right-4 p-4 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-purple-300 z-40"
+      aria-label="Abrir carrito de compras">
+      <i class="fas fa-shopping-cart text-3xl"></i>
+      <span id="cart-item-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-bounce-in text-base hidden">
+          0
+      </span>
+    </button>
+
+    <!-- Botón Flotante de WhatsApp -->
+    <a id="whatsapp-button" href="#" target="_blank"
+       class="fixed bottom-20 right-4 p-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-green-300 z-40"
+       aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
 
     <!-- Carrito de Compras como Modal -->
     <div id="cart-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
@@ -227,6 +234,7 @@
         const cartTotalSpan = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout-button');
         const currentYearSpan = document.getElementById('current-year');
+        const whatsappButton = document.getElementById('whatsapp-button'); // Nuevo elemento del DOM para el botón de WhatsApp
 
         // --- Funciones de Renderizado ---
 
@@ -465,6 +473,13 @@
             renderProducts(products); // Renderiza todos los productos inicialmente
             renderCategories(); // Renderiza los botones de categoría
             currentYearSpan.textContent = new Date().getFullYear(); // Actualiza el año en el footer
+
+            // Configura el enlace de WhatsApp
+            // Reemplaza 'XXXXXXXXXX' con el número de teléfono deseado (ej. 51987654321)
+            // El formato es: código de país + número
+            const whatsappNumber = 'XXXXXXXXXX'; // ¡Aquí irá tu número de WhatsApp!
+            const whatsappMessage = encodeURIComponent('¡Hola! Estoy interesado/a en los productos de Mery Accesorios Import.');
+            whatsappButton.href = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
         });
 
     </script>
